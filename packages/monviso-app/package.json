@@ -1,0 +1,43 @@
+{
+  "name": "monviso-app",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@craco/craco": "^5.2.3",
+    "@types/cesium": "1.59.0",
+    "@types/react": "^16.8.22",
+    "@types/react-dom": "^16.8.4",
+    "cesium": "^1.58.1",
+    "craco-cesium": "^1.1.1",
+    "craco-plugin-react-hot-reload": "^0.0.3",
+    "react": "^16.8.6",
+    "react-dom": "npm:@hot-loader/react-dom@^16.8.6",
+    "react-hot-loader": "^4.11.1",
+    "react-scripts": "3.0.1",
+    "resium": "^1.4.1"
+  },
+  "devDependencies": {
+    "typescript": "^3.5.1"
+  },
+  "scripts": {
+    "start": "craco start",
+    "build": "craco build",
+    "test": "craco test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

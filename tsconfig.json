@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "paths": { "*": ["@types/*"] },
+    "module": "commonjs",
+    "target": "es5",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "outDir": "lib",
+    "sourceMap": true,
+    "skipLibCheck": true,
+    "moduleResolution": "node",
+    "noEmitOnError": false,
+    "noUnusedParameters":true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports":true,
+    "resolveJsonModule": true,
+    "jsx": "react",
+    "lib":[
+      "es5", "es2015", "es2017", "dom"
+    ],
+    "types": [],
+    "typeRoots": [
+      "node_modules/@types",
+      "./src/@types"
+    ]
+  },
+
+  "include":[
+    "./src/**/*.ts",
+    "./src/**/*.tsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
+  "atom": {
+    "rewriteTsconfig": false
+  }
+}

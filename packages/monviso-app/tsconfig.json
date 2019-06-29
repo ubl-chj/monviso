@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./lib",
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "module": "esnext",
+    "noEmit": true,
+    "jsx": "preserve",
+    "isolatedModules": true
+  },
+  "include": [
+    "./src"
+  ],
+  "typedocOptions": {
+    "mode": "modules",
+    "out": "docs"
+  }
+}
