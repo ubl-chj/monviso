@@ -3,6 +3,7 @@ import GoogleMapReact from 'google-map-react'
 import {google} from 'google-maps'
 import {InputForm} from './InputForm'
 const imageUri = 'https://iiif.bodleian.ox.ac.uk/iiif/image/6b13a8ee-9abc-43ef-9dac-ed48ce579861'
+const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 const getNormalizedCoord = (coord: google.maps.Point, zoom: number) => {
   var y = coord.y;
   var x = coord.x;
@@ -87,7 +88,7 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
       <InputForm/>
       <div ref={coordsDiv}/>
       <GoogleMapReact
-        bootstrapURLKeys={{ key: 'AIzaSyB8hrcI_rgMmi1r2atHkyF0kxCwyYAaj00' }}
+        bootstrapURLKeys={{ key: API_KEY as string }}
         defaultCenter={{lat: 0, lng: 0}}
         defaultZoom={6}
         yesIWantToUseGoogleMapApiInternals
