@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^5.2.3",
+    "@monviso/core": "file:../monviso-core",
     "@types/cesium": "1.59.0",
     "@types/google-map-react": "^0.23.12",
     "@types/react": "^16.8.22",
@@ -17,7 +18,8 @@
     "react-hot-loader": "^4.11.1",
     "react-redux": "^7.1.0",
     "react-scripts": "3.0.1",
-    "resium": "^1.4.1"
+    "resium": "^1.4.1",
+    "uuidv5": "^1.0.0"
   },
   "devDependencies": {
     "typescript": "^3.5.1"

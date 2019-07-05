@@ -1,0 +1,9 @@
+import {ReducerBuilder, reducerWithInitialState} from 'typescript-fsa-reducers'
+import {setCurrentImageId} from "../actions"
+import {IConfig} from "../.."
+
+export const config = (initialState): ReducerBuilder<IConfig> => reducerWithInitialState(initialState)
+  .case(setCurrentImageId, (state, {currentImageId}): ReducerBuilder<IConfig> => ({
+    ...state,
+    currentImageId
+  }))

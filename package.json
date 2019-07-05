@@ -3,6 +3,7 @@
   "private": true,
   "dependencies": {
     "@craco/craco": "^5.2.3",
+    "@monviso/core": "file:packages/monviso-core",
     "@types/cesium": "1.59.0",
     "@types/google-maps": "^3.2.1",
     "@types/google-map-react": "^0.23.12",
