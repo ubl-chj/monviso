@@ -3,7 +3,7 @@ import {Provider} from 'react-redux'
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {ImageResponseProvider, MapContainer} from './components'
+import {ImageResponseProvider, MapContainer, PersistentDrawer} from './components'
 import {composeWithDevTools} from 'redux-devtools-extension'
 import {config, imageResponse} from '@monviso/core'
 
@@ -31,8 +31,9 @@ const store: Store = createStore(
 
 ReactDOM.render(
   <Provider store={store}>
-    <ImageResponseProvider/>
-    <MapContainer/>
+    <PersistentDrawer>
+      <MapContainer/>
+    </PersistentDrawer>
   </Provider>,
   document.getElementById('root'));
 

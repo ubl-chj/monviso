@@ -1,9 +1,9 @@
 export * from './state/'
 
-export interface State {
+export interface IState {
   error?: Error;
 }
 
 export interface IConfig {
-  currentImageId?: string
+  currentImageId?: string;
 }

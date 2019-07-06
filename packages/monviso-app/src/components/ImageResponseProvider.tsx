@@ -2,6 +2,7 @@ import React, {ReactElement, useEffect, useState} from "react"
 import {TextField, makeStyles} from '@material-ui/core'
 import {useDispatch} from "react-redux"
 import {fetchImageResponse, getCurrentImageId, setCurrentImageId} from "@monviso/core"
+import {EndAdornment, StartAdornment} from "./SearchBoxInputAdornments"
 
 export const useSearchBoxStyles = makeStyles((theme: any): any => ({
   container: {
@@ -59,26 +60,34 @@ export const ImageResponseProvider: React.FC<any> = (): ReactElement => {
   }, [isInitialized, dispatch, currentImageId])
 
   return (
-      <form
-        autoComplete="off"
-        className={classes.container}
-        data-testid='standard-searchform'
-        noValidate
-        onSubmit={handleSubmit}
-      >
-        <TextField
-          InputLabelProps={{
-            shrink: true,
-          }}
-          className={classes.input}
-          fullWidth
-          id="standard-full-width"
-          margin="normal"
-          onChange={handleChange}
-          placeholder={'search'}
-          type="search"
-          value={values}
-        />
-      </form>
+    <form
+      autoComplete="off"
+      className={classes.container}
+      data-testid='standard-searchform'
+      noValidate
+      onSubmit={handleSubmit}
+    >
+      <TextField
+        InputLabelProps={{
+          shrink: true,
+        }}
+        InputProps={
+          values ? {
+            endAdornment: <EndAdornment onClick={handleClear}/>,
+            startAdornment: <StartAdornment/>,
+          } : {
+            startAdornment: <StartAdornment/>,
+          }
+        }
+        className={classes.input}
+        fullWidth
+        id="standard-full-width"
+        margin="normal"
+        onChange={handleChange}
+        placeholder={'search'}
+        type="search"
+        value={values}
+      />
+    </form>
   )
 }
