@@ -8,7 +8,6 @@
     "forceConsistentCasingInFileNames": true,
     "module": "esnext",
     "noEmit": true,
-    "jsx": "preserve",
     "isolatedModules": true
   },
   "include": [

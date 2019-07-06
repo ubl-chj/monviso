@@ -2,8 +2,7 @@ import {AnyAction, Store, applyMiddleware, createStore, Reducer, combineReducers
 import {Provider} from 'react-redux'
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
-import {ImageResponseProvider, MapContainer, PersistentDrawer} from './components'
+import {MapContainer, PersistentDrawer} from './components'
 import {composeWithDevTools} from 'redux-devtools-extension'
 import {config, imageResponse} from '@monviso/core'
 
