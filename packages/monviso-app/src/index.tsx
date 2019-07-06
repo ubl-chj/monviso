@@ -9,7 +9,7 @@ import {config, imageResponse} from '@monviso/core'
 import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk'
 
 const initialConfigState = {
-  currentImageId: 'https://iiif.bodleian.ox.ac.uk/iiif/image/6b13a8ee-9abc-43ef-9dac-ed48ce579861/info.json'
+  currentImageId: 'https://image01.cudl.lib.cam.ac.uk/iiif/PR-ATLAS-00002-00061-00001-000-00003.jp2/info.json'
 }
 const configReducer: Reducer = config(initialConfigState)
 
