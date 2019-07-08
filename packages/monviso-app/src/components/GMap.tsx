@@ -1,8 +1,19 @@
 import React, {ReactElement, useRef} from 'react'
+import {FlagMarker} from '.'
 import GoogleMapReact from 'google-map-react'
+import {useDispatch} from "react-redux"
 import {google} from 'google-maps'
-import {getCurrentImageId, getImageHeight, getImageTiles, getImageWidth} from '@monviso/core'
+import {
+  getCurrentImageId,
+  getImageHeight,
+  getImageTiles,
+  getImageWidth,
+  getPointAnnotations,
+  IPointAnnotation,
+  setPointAnnotation
+} from '@monviso/core'
 import uuidv5 from 'uuidv5'
+
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 
 export const MapContainer: React.FC<any> = (): ReactElement => {
@@ -10,9 +21,13 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
   const currentImageId = getCurrentImageId()
   const currentImageIdBase = currentImageId.substring(0, currentImageId.lastIndexOf("/"))
   const currentImageUUID = currentImageId && uuidv5('url', currentImageId)
+  const dispatch = useDispatch()
   const imageWidth = getImageWidth(currentImageUUID)
   const imageHeight = getImageHeight(currentImageUUID)
   const imageTiles = getImageTiles(currentImageUUID)
+  const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  let labelIndex = 0
+  const pointAnnotations = getPointAnnotations()
   const scaleFactors = imageTiles && imageTiles[0].scaleFactors
   const maxScaleFactor = Math.max.apply(null, scaleFactors)
   const varTileWidth = Math.ceil(imageWidth / maxScaleFactor)
@@ -81,8 +96,26 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
     map.addListener('mousemove', (event: any): void => {
       coordsDiv.current.textContent =
         'lat: ' + Math.round(event.latLng.lat()) + ', ' +
-        'lng: ' + Math.round(event.latLng.lng());
+        'lng: ' + Math.round(event.latLng.lng())
     })
+  }
+
+  const addClickListener = (map: any): void => {
+    map.addListener('click', (e: any): void => {
+      const pointAnnotation = {sender: '', timestamp: new Date().getTime(), lat: 0, lng: 0}
+      pointAnnotation.lat = e.latLng.lat()
+      pointAnnotation.lng = e.latLng.lng()
+      dispatch(setPointAnnotation({pointAnnotation}))
+    })
+  }
+
+  const buildPointAnnotations = (): ReactElement[] => {
+    return pointAnnotations.map((point: IPointAnnotation, i: number): ReactElement => <FlagMarker
+      key={i}
+      lat={point.lat}
+      lng={point.lng}
+      text={labels[labelIndex++ % labels.length]}
+    />)
   }
 
   const buildImageMap = (maps: any): google.maps.ImageMapType => {
@@ -97,14 +130,17 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
 
   const handleApiLoaded = ({map, maps}: any): void => {
     addCoordsDiv(map, maps)
+    addClickListener(map)
     map.mapTypes.set('image', buildImageMap(maps))
     map.setMapTypeId('image')
-  };
+  }
 
   const buildOptions = (maps: any): {} => {
     return {
       gestureHandling: 'greedy',
+      mapTypeControl: true,
       minZoom: 2,
+      streetViewControl: true,
       zoomControl: true,
       zoomControlOptions: {
         position: maps.ControlPosition.LEFT_TOP
@@ -123,7 +159,9 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
         options={buildOptions}
         yesIWantToUseGoogleMapApiInternals
         onGoogleApiLoaded={handleApiLoaded}
-      />
+      >
+        {buildPointAnnotations()}
+      </GoogleMapReact>
     </div>
   ) : <></>
 }

@@ -7,3 +7,13 @@ export interface IState {
 export interface IConfig {
   currentImageId?: string;
 }
+
+export interface IAnnotations {
+  points: IPointAnnotation[];
+}
+export interface IPointAnnotation {
+  sender: string;
+  timestamp: number;
+  lat: number;
+  lng: number;
+}

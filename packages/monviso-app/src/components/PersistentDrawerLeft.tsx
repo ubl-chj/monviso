@@ -1,7 +1,7 @@
 import React, {EventHandler, ReactElement} from 'react'
 import {makeStyles, useTheme} from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar'
-import {BookOutlined, ChevronLeft, ChevronRight, Home, ImageOutlined, Menu} from '@material-ui/icons'
+import {ChevronLeft, ChevronRight, Home, Menu} from '@material-ui/icons'
 import {
   Divider,
   Drawer,
