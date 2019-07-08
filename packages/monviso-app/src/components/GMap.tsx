@@ -13,9 +13,10 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
   const imageWidth = getImageWidth(currentImageUUID)
   const imageHeight = getImageHeight(currentImageUUID)
   const imageTiles = getImageTiles(currentImageUUID)
-  const tileWidth = imageTiles && imageTiles[0].width
-  const tileHeight = (imageTiles && imageTiles[0].height) || (imageTiles && imageTiles[0].width)
   const scaleFactors = imageTiles && imageTiles[0].scaleFactors
+  const maxScaleFactor = Math.max.apply(null, scaleFactors)
+  const varTileWidth = Math.ceil(imageWidth / maxScaleFactor)
+  const varTileHeight = Math.ceil(imageHeight / maxScaleFactor)
 
   interface ICoord {
     x: number;
@@ -37,29 +38,39 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
 
   const getTileUrl = (coord: google.maps.Point, zoom: number): string | null => {
     const normalizedCoord = getNormalizedCoord(coord, zoom)
-    const maxScaleFactor = Math.max.apply(null, scaleFactors)
-    const maxLevel = Math.round(Math.log(maxScaleFactor) * Math.LOG2E)
+    const maxScale = Math.round(Math.log(maxScaleFactor) * Math.LOG2E)
     const IIIF_ROTATION = '0'
-    const scale = Math.pow(0.5, maxLevel - zoom)
-    const levelWidth = Math.ceil(imageWidth * scale)
-    const levelHeight = Math.ceil(imageHeight * scale)
-    const iiifTileSizeWidth = Math.ceil(tileWidth / scale);
-    const iiifTileSizeHeight = Math.ceil(tileHeight / scale);
-    let iiifRegion
-    let iiifSize
-    if (levelWidth < tileWidth && levelHeight < tileHeight) {
-      iiifSize = levelWidth + ",";
-      iiifRegion = 'full';
-    } else if (normalizedCoord) {
-      const iiifTileX = normalizedCoord.x * iiifTileSizeWidth;
-      const iiifTileY = normalizedCoord.y * iiifTileSizeHeight;
-      const iiifTileW = Math.min(iiifTileSizeWidth, Math.abs(imageWidth - iiifTileX))
-      const iiifTileH = Math.min(iiifTileSizeHeight, Math.abs(imageHeight - iiifTileY))
-      iiifSize = Math.ceil(iiifTileW * scale) > 0 ? Math.ceil(iiifTileW * scale) + "," : tileWidth + ",";
-      iiifRegion = [iiifTileX, iiifTileY, iiifTileW, iiifTileH].join(',');
-    }
-    if (iiifRegion && iiifSize) {
-      return [currentImageIdBase, iiifRegion, iiifSize, IIIF_ROTATION, 'default.jpg'].join('/')
+    const scale = Math.pow(0.5, maxScale - zoom)
+    const scaledTileWidth = Math.ceil(varTileWidth / scale);
+    const scaledTileHeight = Math.ceil(varTileHeight / scale)
+    if (normalizedCoord) {
+      // region
+      const rx = normalizedCoord.x * scaledTileWidth
+      const ry = normalizedCoord.y * scaledTileHeight
+      let rw = scaledTileWidth
+      if (rx + rw > imageWidth) {
+        rw = Math.abs(imageWidth - rx)
+      }
+      let rh = scaledTileHeight
+      if (ry + rh > imageHeight) {
+        rh = Math.abs(imageHeight - ry)
+      }
+      // size
+      let sw = varTileWidth
+      if (rx + scaledTileWidth > imageWidth) {
+        sw = Math.ceil((imageWidth - rx + scale - 1) * scale)
+      }
+      let sh = varTileHeight
+      if (ry + scaledTileHeight > imageHeight) {
+        sh = Math.ceil((imageHeight - ry + scale - 1) * scale)
+      }
+      const iiifRegion = [rx, ry, rw, rh].join(',')
+      const iiifSize = [sw, sh].join(',')
+      if (iiifRegion && iiifSize) {
+        return [currentImageIdBase, iiifRegion, iiifSize, IIIF_ROTATION, 'default.jpg'].join('/')
+      } else {
+        return null
+      }
     } else {
       return null
     }
@@ -77,10 +88,10 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
   const buildImageMap = (maps: any): google.maps.ImageMapType => {
     return new maps.ImageMapType({
       maxZoom: 10,
-      minZoom: 3,
-      name: 'Manuscript',
+      minZoom: 2,
+      name: 'image',
       getTileUrl,
-      tileSize: new maps.Size(128, 128),
+      tileSize: new maps.Size(imageWidth / maxScaleFactor, imageHeight / maxScaleFactor),
     })
   }
 
@@ -93,7 +104,7 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
   const buildOptions = (maps: any): {} => {
     return {
       gestureHandling: 'greedy',
-      minZoom: 3,
+      minZoom: 2,
       zoomControl: true,
       zoomControlOptions: {
         position: maps.ControlPosition.LEFT_TOP
@@ -106,8 +117,8 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
       <div ref={coordsDiv}/>
       <GoogleMapReact
         bootstrapURLKeys={{ key: API_KEY as string }}
-        defaultCenter={{lat: 78, lng: -107}}
-        defaultZoom={3}
+        defaultCenter={{lat: 54, lng: -34}}
+        defaultZoom={2}
         key={currentImageId}
         options={buildOptions}
         yesIWantToUseGoogleMapApiInternals
