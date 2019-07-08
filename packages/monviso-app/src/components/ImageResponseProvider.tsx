@@ -84,7 +84,7 @@ export const ImageResponseProvider: React.FC<any> = (): ReactElement => {
         id="standard-full-width"
         margin="normal"
         onChange={handleChange}
-        placeholder={'search'}
+        placeholder={'Enter an image URI'}
         type="search"
         value={values}
       />

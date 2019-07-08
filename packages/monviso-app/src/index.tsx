@@ -4,9 +4,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import {MapContainer, PersistentDrawer} from './components'
 import {composeWithDevTools} from 'redux-devtools-extension'
-import {config, imageResponse} from '@monviso/core'
+import {annotations, config, imageResponse} from '@monviso/core'
 
 import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk'
+
+const initialAnnotationState = {
+  pointAnnotations: []
+}
+
+const annotationReducer: Reducer = annotations(initialAnnotationState)
 
 const initialConfigState = {
   currentImageId: 'https://image01.cudl.lib.cam.ac.uk/iiif/PR-ATLAS-00002-00061-00001-000-00003.jp2/info.json'
@@ -14,6 +20,7 @@ const initialConfigState = {
 const configReducer: Reducer = config(initialConfigState)
 
 export const rootReducer = (): Reducer => combineReducers({
+  annotations: annotationReducer,
   config: configReducer,
   imageResponse
 })
