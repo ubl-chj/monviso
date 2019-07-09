@@ -1,3 +1,4 @@
+export * from './FlagMarker'
 export * from './GMap'
 export * from './ImageResponseProvider'
 export * from './PersistentDrawerLeft'

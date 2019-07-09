@@ -1,9 +1,19 @@
 import React, {ReactElement, useRef} from 'react'
+import {FlagMarker} from '.'
 import GoogleMapReact from 'google-map-react'
 import {useDispatch} from "react-redux"
 import {google} from 'google-maps'
-import {IPointAnnotation, getCurrentImageId, getImageHeight, getImageTiles, getImageWidth, getPointAnnotations, setPointAnnotation} from '@monviso/core'
+import {
+  getCurrentImageId,
+  getImageHeight,
+  getImageTiles,
+  getImageWidth,
+  getPointAnnotations,
+  IPointAnnotation,
+  setPointAnnotation
+} from '@monviso/core'
 import uuidv5 from 'uuidv5'
+
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 
 export const MapContainer: React.FC<any> = (): ReactElement => {
@@ -15,6 +25,8 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
   const imageWidth = getImageWidth(currentImageUUID)
   const imageHeight = getImageHeight(currentImageUUID)
   const imageTiles = getImageTiles(currentImageUUID)
+  const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+  let labelIndex = 0
   const pointAnnotations = getPointAnnotations()
   const scaleFactors = imageTiles && imageTiles[0].scaleFactors
   const maxScaleFactor = Math.max.apply(null, scaleFactors)
@@ -97,16 +109,13 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
     })
   }
 
-  const buildPointAnnotations = () => {
-    const positions = pointAnnotations.map((point: IPointAnnotation) => {
-      return {lat: point.lat, lng: point.lng}
-    })
-    return {
-      positions,
-      options: {
-        radius: 20
-      }
-    }
+  const buildPointAnnotations = (): ReactElement[] => {
+    return pointAnnotations.map((point: IPointAnnotation, i: number): ReactElement => <FlagMarker
+      key={i}
+      lat={point.lat}
+      lng={point.lng}
+      text={labels[labelIndex++ % labels.length]}
+    />)
   }
 
   const buildImageMap = (maps: any): google.maps.ImageMapType => {
@@ -152,7 +161,9 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
         options={buildOptions}
         yesIWantToUseGoogleMapApiInternals
         onGoogleApiLoaded={handleApiLoaded}
-      />
+      >
+        {buildPointAnnotations()}
+      </GoogleMapReact>
     </div>
   ) : <></>
 }

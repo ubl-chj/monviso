@@ -1,4 +1,4 @@
-import {createMuiTheme, makeStyles} from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline'
 import {PersistentDrawerLeft} from '.'
 import React from 'react'
