@@ -1,8 +1,8 @@
+import {EndAdornment, StartAdornment} from "./SearchBoxInputAdornments"
 import React, {ReactElement, useEffect, useState} from "react"
 import {TextField, makeStyles} from '@material-ui/core'
-import {useDispatch} from "react-redux"
 import {fetchImageResponse, getCurrentImageId, setCurrentImageId} from "@monviso/core"
-import {EndAdornment, StartAdornment} from "./SearchBoxInputAdornments"
+import {useDispatch} from "react-redux"
 
 export const useSearchBoxStyles = makeStyles((theme: any): any => ({
   container: {

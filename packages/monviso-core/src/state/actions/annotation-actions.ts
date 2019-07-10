@@ -1,5 +1,5 @@
-import actionCreatorFactory from 'typescript-fsa';
 import {IPointAnnotation} from "../../index"
+import actionCreatorFactory from 'typescript-fsa';
 const actionCreator = actionCreatorFactory()
 
 const SET_POINT_ANNOTATION = "SET_POINT_ANNOTATION"

@@ -1,12 +1,15 @@
-import {AnyAction, Store, applyMiddleware, createStore, Reducer, combineReducers} from "redux"
-import {Provider} from 'react-redux'
-import React from 'react';
-import ReactDOM from 'react-dom';
-import {MapContainer, PersistentDrawer} from './components'
-import {composeWithDevTools} from 'redux-devtools-extension'
+import 'firebase/database'
+import {AnyAction, Reducer, Store, applyMiddleware, combineReducers, createStore} from "redux"
+import {App, MapContainer} from './components'
 import {annotations, config, imageResponse} from '@monviso/core'
-
 import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk'
+import {FirebaseAppProvider} from '@use-firebase/app'
+import {FirebaseAuthProvider} from '@use-firebase/auth'
+import {Provider} from 'react-redux'
+import React from 'react'
+import ReactDOM from 'react-dom'
+import {composeWithDevTools} from 'redux-devtools-extension'
+import {firebaseConfig} from './config'
 
 const initialAnnotationState = {
   pointAnnotations: []
@@ -37,9 +40,13 @@ const store: Store = createStore(
 
 ReactDOM.render(
   <Provider store={store}>
-    <PersistentDrawer>
-      <MapContainer/>
-    </PersistentDrawer>
+    <FirebaseAppProvider config={firebaseConfig}>
+      <FirebaseAuthProvider>
+        <App>
+          {<MapContainer/>}
+        </App>
+      </FirebaseAuthProvider>
+    </FirebaseAppProvider>
   </Provider>,
   document.getElementById('root'));
 

@@ -1,17 +1,18 @@
-import React, {ReactElement, useRef} from 'react'
-import {FlagMarker} from '.'
-import GoogleMapReact from 'google-map-react'
-import {useDispatch} from "react-redux"
-import {google} from 'google-maps'
 import {
+  IPointAnnotation,
   getCurrentImageId,
   getImageHeight,
   getImageTiles,
   getImageWidth,
-  getPointAnnotations,
-  IPointAnnotation,
   setPointAnnotation
 } from '@monviso/core'
+import React, {ReactElement, useRef} from 'react'
+import {FlagMarker} from '.'
+import GoogleMapReact from 'google-map-react'
+import {google} from 'google-maps'
+import {useDispatch} from "react-redux"
+import {useValue} from '../utils'
+import uuid from 'uuid'
 import uuidv5 from 'uuidv5'
 
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
@@ -25,9 +26,9 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
   const imageWidth = getImageWidth(currentImageUUID)
   const imageHeight = getImageHeight(currentImageUUID)
   const imageTiles = getImageTiles(currentImageUUID)
+  const [value, setValue] = useValue('annotations', undefined, undefined) as any
   const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
   let labelIndex = 0
-  const pointAnnotations = getPointAnnotations()
   const scaleFactors = imageTiles && imageTiles[0].scaleFactors
   const maxScaleFactor = Math.max.apply(null, scaleFactors)
   const varTileWidth = Math.ceil(imageWidth / maxScaleFactor)
@@ -102,15 +103,20 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
 
   const addClickListener = (map: any): void => {
     map.addListener('click', (e: any): void => {
-      const pointAnnotation = {sender: '', timestamp: new Date().getTime(), lat: 0, lng: 0}
+      let pointAnnotation = {lat: 0, lng: 0, timestamp: 0}
+      pointAnnotation.timestamp = new Date().getTime()
       pointAnnotation.lat = e.latLng.lat()
       pointAnnotation.lng = e.latLng.lng()
       dispatch(setPointAnnotation({pointAnnotation}))
+      const annoId = uuid()
+      setValue({[annoId]: {...pointAnnotation}})
     })
   }
 
   const buildPointAnnotations = (): ReactElement[] => {
-    return pointAnnotations.map((point: IPointAnnotation, i: number): ReactElement => <FlagMarker
+    console.log(value)
+    const pointAnnotations: IPointAnnotation[] = value !== null ? Object.values(value) : []
+    return pointAnnotations.map((point, i: number): ReactElement => <FlagMarker
       key={i}
       lat={point.lat}
       lng={point.lng}
@@ -120,10 +126,10 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
 
   const buildImageMap = (maps: any): google.maps.ImageMapType => {
     return new maps.ImageMapType({
+      getTileUrl,
       maxZoom: 10,
       minZoom: 2,
       name: 'image',
-      getTileUrl,
       tileSize: new maps.Size(imageWidth / maxScaleFactor, imageHeight / maxScaleFactor),
     })
   }

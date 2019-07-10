@@ -4,6 +4,10 @@ export const getCurrentImageId = () => {
   return useSelector((state: any): any => state.config && state.config.currentImageId)
 }
 
+export const getCurrentUser = () => {
+  return useSelector((state: any): any => state.config && state.config.currentUser)
+}
+
 export const getPointAnnotations = () => {
   return useSelector((state: any): any => state.annotations && state.annotations.pointAnnotations)
 }

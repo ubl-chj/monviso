@@ -1,64 +1,95 @@
-import {makeStyles} from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline'
-import {PersistentDrawerLeft} from '.'
-import React from 'react'
-import classNames from 'classnames'
+import {ChevronLeft, ChevronRight, Home} from "@material-ui/icons"
+import {
+  Divider,
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  makeStyles,
+  useTheme
+} from "@material-ui/core"
+import React, {ReactElement} from "react"
 
 const drawerWidth = 240
 
-export const styles = (theme: any) => ({
-  content: {
-    flexGrow: 1,
-    marginTop: 40,
-    marginLeft: -drawerWidth,
-    padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
-      duration: theme.transitions.duration.leavingScreen,
-      easing: theme.transitions.easing.sharp,
-    }),
+const useStyles = makeStyles(theme => ({
+  drawer: {
+    flexShrink: 0,
+    width: drawerWidth,
   },
-  contentShift: {
-    marginLeft: 0,
-    transition: theme.transitions.create('margin', {
-      duration: theme.transitions.duration.enteringScreen,
-      easing: theme.transitions.easing.easeOut,
-    }),
-  },
-  root: {
+  drawerHeader: {
+    alignItems: 'center',
     display: 'flex',
+    padding: '0 8px',
+    ...theme.mixins.toolbar,
+    justifyContent: 'flex-end',
   },
-})
+  drawerPaper: {
+    width: drawerWidth,
+    zIndex: 3000,
+  },
+}))
 
+export const PersistentDrawer: React.FC<any> = (props): ReactElement => {
+  const classes = useStyles()
+  const {handleDrawerClose, open} = props
+  const theme: any = useTheme();
+  const listItems = [
+    {
+      id: 'home',
+      index: 0,
+      path: '/',
+      text: 'Home'
+    },
+  ]
 
-export const PersistentDrawer: React.FC<any> = (props): any => {
-  const useStyles = makeStyles(styles)
-  const classes = useStyles();
-  const {enabled, children} = props
-  const [open, setOpen] = React.useState(false);
-  const handleDrawerOpen = () => {
-    setOpen(true)
+  const buildListItemIcon = (item: string): any => {
+    switch (item) {
+      case 'home':
+        return <Home/>
+    }
   }
 
-  const handleDrawerClose = () => {
-    setOpen(false)
+  const buildListItems = (items: any): ReactElement => {
+    return items.map((item: any) =>
+      <ListItem
+        button
+        key={item.index}
+        style={{color: '#2f2c2c', textDecoration: 'none'}}
+      >
+        <ListItemIcon>
+          {buildListItemIcon(item.id)}
+        </ListItemIcon>
+        <ListItemText primary={item.text} />
+      </ListItem>
+    )
   }
 
   return (
-    <div className={classes.root}>
-      <CssBaseline />
-      <PersistentDrawerLeft
-        enabled={enabled}
-        handleDrawerClose={handleDrawerClose}
-        handleDrawerOpen={handleDrawerOpen}
-        open={open}
-      />
-      <main
-        className={classNames(classes.content, {
-          [classes.contentShift]: open,
-        })}
+    <Drawer
+      anchor="left"
+      className={classes.drawer}
+      classes={{
+        paper: classes.drawerPaper,
+      }}
+      open={open}
+      variant="persistent"
+    >
+      <div className={classes.drawerHeader}>
+        <IconButton
+          href=''
+          onClick={handleDrawerClose}>
+          {theme.direction === 'ltr' ? <ChevronLeft /> : <ChevronRight />}
+        </IconButton>
+      </div>
+      <Divider />
+      <List
+        component="nav"
       >
-        {children}
-      </main>
-    </div>
+        {buildListItems(listItems)}
+      </List>
+    </Drawer>
   )
 }

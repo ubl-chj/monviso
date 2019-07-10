@@ -45,6 +45,16 @@
     "react/react-in-jsx-scope": 2,
     "semi": 0,
     "space-before-function-paren": "off",
+    "sort-keys": ["error", "asc", {
+      "caseSensitive": false,
+      "natural": false
+    }],
+    "sort-imports": ["error", {
+      "ignoreCase": false,
+      "ignoreDeclarationSort": false,
+      "ignoreMemberSort": false,
+      "memberSyntaxSortOrder": ["none", "all", "multiple", "single"]
+    }],
     "standard/no-callback-literal": "off",
     "strict": [
       2,

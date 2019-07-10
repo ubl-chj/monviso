@@ -9,10 +9,9 @@ export interface IConfig {
 }
 
 export interface IAnnotations {
-  points: IPointAnnotation[];
+  pointAnnotations: IPointAnnotation[];
 }
 export interface IPointAnnotation {
-  sender: string;
   timestamp: number;
   lat: number;
   lng: number;
