@@ -1,7 +1,7 @@
 import {AuthProvider, useFirebaseAuth} from '@use-firebase/auth'
 import React, {ReactElement} from "react"
 import Button from '@material-ui/core/Button'
-import { makeStyles } from '@material-ui/core/styles';
+import {makeStyles} from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   button: {
@@ -14,10 +14,10 @@ const useStyles = makeStyles(theme => ({
 }))
 
 export const SignInButton: React.FC<any> = (): ReactElement => {
-  const classes = useStyles();
-  const { signIn, signInError, createAuthProvider } = useFirebaseAuth();
+  const classes = useStyles({});
+  const {signIn, signInError, createAuthProvider} = useFirebaseAuth();
 
-  const onSignIn = (authProvider: any) => {
+  const onSignIn = (authProvider: any): void => {
     const provider = createAuthProvider(authProvider);
     signIn(provider);
   }

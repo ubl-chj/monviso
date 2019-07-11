@@ -57,7 +57,7 @@ const useStyles = makeStyles(theme => ({
     },
     marginRight: 20,
   },
-}));
+}))
 
 export const MonvisoAppBar: React.FC<IMonvisoAppBar> = (props): ReactElement => {
   const classes = useStyles();

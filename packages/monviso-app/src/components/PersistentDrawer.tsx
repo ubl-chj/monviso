@@ -52,8 +52,8 @@ export const PersistentDrawer: React.FC<any> = (props): ReactElement => {
     }
   }
 
-  const buildListItems = (items: any): ReactElement => {
-    return items.map((item: any) =>
+  const buildListItems = (items: any): ReactElement[] => {
+    return items.map((item: any): ReactElement =>
       <ListItem
         button
         key={item.index}

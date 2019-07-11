@@ -1,12 +1,12 @@
-import CssBaseline from '@material-ui/core/CssBaseline'
+import {CircularProgress, CssBaseline} from '@material-ui/core'
+import React, {Suspense} from 'react'
 import {MonvisoAppBar} from '.'
-import React from 'react'
-import {Typography} from "@material-ui/core"
 import classNames from 'classnames'
 import {makeStyles} from '@material-ui/core/styles'
 import {useFirebaseAuth} from "@use-firebase/auth"
-
 const drawerWidth = 240
+const AuthorizedMapContainer = React.lazy(() => import('./AuthorizedMapContainer'))
+const AnonymousMapContainer = React.lazy(() => import('./AnonymousMapContainer'))
 
 export const styles = (theme: any) => ({
   content: {
@@ -26,6 +26,9 @@ export const styles = (theme: any) => ({
       easing: theme.transitions.easing.easeOut,
     }),
   },
+  progress: {
+    margin: theme.spacing(2),
+  },
   root: {
     display: 'flex',
   },
@@ -34,15 +37,16 @@ export const styles = (theme: any) => ({
 
 export const App: React.FC<any> = (props): any => {
   const useStyles = makeStyles(styles)
-  const {isSignedIn} = useFirebaseAuth()
   const classes = useStyles();
-  const {enabled, children} = props
-  const [open, setOpen] = React.useState(false);
-  const handleDrawerOpen = () => {
+  const {enabled} = props
+  const {isSignedIn} = useFirebaseAuth()
+  const [open, setOpen] = React.useState(false)
+
+  const handleDrawerOpen = (): void => {
     setOpen(true)
   }
 
-  const handleDrawerClose = () => {
+  const handleDrawerClose = (): void => {
     setOpen(false)
   }
 
@@ -55,17 +59,15 @@ export const App: React.FC<any> = (props): any => {
         handleDrawerOpen={handleDrawerOpen}
         open={open}
       />
-      {isSignedIn ?
+      <Suspense fallback={<CircularProgress className={classes.progress}/>}>
         <main
           className={classNames(classes.content, {
             [classes.contentShift]: open,
           })}
         >
-          {children}
-        </main> :
-        <div style={{alignContent: 'center', display: 'flex', justifyContent: 'center', marginTop: 200, width: '100%'}}>
-          <Typography variant="h6" component="h2" gutterBottom>Please Sign In</Typography>
-        </div>}
+          {isSignedIn ? <AuthorizedMapContainer/> : <AnonymousMapContainer/>}
+        </main>
+      </Suspense>
     </div>
   )
 }

@@ -1,8 +1,8 @@
 import 'firebase/database'
 import {AnyAction, Reducer, Store, applyMiddleware, combineReducers, createStore} from "redux"
-import {App, MapContainer} from './components'
 import {annotations, config, imageResponse} from '@monviso/core'
 import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk'
+import {App} from './components'
 import {FirebaseAppProvider} from '@use-firebase/app'
 import {FirebaseAuthProvider} from '@use-firebase/auth'
 import {Provider} from 'react-redux'
@@ -42,9 +42,7 @@ ReactDOM.render(
   <Provider store={store}>
     <FirebaseAppProvider config={firebaseConfig}>
       <FirebaseAuthProvider>
-        <App>
-          {<MapContainer/>}
-        </App>
+        <App/>
       </FirebaseAuthProvider>
     </FirebaseAppProvider>
   </Provider>,

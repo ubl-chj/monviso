@@ -4,7 +4,7 @@ import {TextField, makeStyles} from '@material-ui/core'
 import {fetchImageResponse, getCurrentImageId, setCurrentImageId} from "@monviso/core"
 import {useDispatch} from "react-redux"
 
-export const useSearchBoxStyles = makeStyles((theme: any): any => ({
+export const useSearchBoxStyles = makeStyles((theme) => ({
   container: {
     display: 'flex',
     flex: '1',

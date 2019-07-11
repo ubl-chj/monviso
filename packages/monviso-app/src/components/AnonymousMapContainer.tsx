@@ -4,29 +4,25 @@ import {
   getImageHeight,
   getImageTiles,
   getImageWidth,
-  setPointAnnotation
 } from '@monviso/core'
 import React, {ReactElement, useRef} from 'react'
 import {FlagMarker} from '.'
-import GoogleMapReact from 'google-map-react'
 import {google} from 'google-maps'
-import {useDispatch} from "react-redux"
 import {useValue} from '../utils'
-import uuid from 'uuid'
 import uuidv5 from 'uuidv5'
 
+const GoogleMapReact = React.lazy(() => import('google-map-react'))
 const API_KEY = process.env.REACT_APP_GOOGLE_API_KEY
 
-export const MapContainer: React.FC<any> = (): ReactElement => {
+const AnonymousMapContainer: React.FC<any> = (): ReactElement => {
   let coordsDiv: any = useRef()
   const currentImageId = getCurrentImageId()
   const currentImageIdBase = currentImageId.substring(0, currentImageId.lastIndexOf("/"))
   const currentImageUUID = currentImageId && uuidv5('url', currentImageId)
-  const dispatch = useDispatch()
   const imageWidth = getImageWidth(currentImageUUID)
   const imageHeight = getImageHeight(currentImageUUID)
   const imageTiles = getImageTiles(currentImageUUID)
-  const [value, setValue] = useValue('annotations', undefined, undefined) as any
+  const [value] = useValue('annotations', undefined, undefined) as any
   const labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
   let labelIndex = 0
   const scaleFactors = imageTiles && imageTiles[0].scaleFactors
@@ -101,27 +97,28 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
     })
   }
 
-  const addClickListener = (map: any): void => {
-    map.addListener('click', (e: any): void => {
-      let pointAnnotation = {lat: 0, lng: 0, timestamp: 0}
-      pointAnnotation.timestamp = new Date().getTime()
-      pointAnnotation.lat = e.latLng.lat()
-      pointAnnotation.lng = e.latLng.lng()
-      dispatch(setPointAnnotation({pointAnnotation}))
-      const annoId = uuid()
-      setValue({[annoId]: {...pointAnnotation}})
-    })
-  }
-
   const buildPointAnnotations = (): ReactElement[] => {
-    console.log(value)
-    const pointAnnotations: IPointAnnotation[] = value !== null ? Object.values(value) : []
-    return pointAnnotations.map((point, i: number): ReactElement => <FlagMarker
-      key={i}
-      lat={point.lat}
-      lng={point.lng}
-      text={labels[labelIndex++ % labels.length]}
-    />)
+    let pointAnnotations: IPointAnnotation[]
+    if (value !== null) {
+      const filterKeys = Object.keys(value).filter((k): boolean => k.split('_')[0] === currentImageUUID)
+      const imageAnnos = Object.keys(value)
+        .filter((key): boolean => filterKeys.includes(key))
+        .reduce((obj, key): {} => {
+          return {
+            ...obj,
+            [key]: value[key]
+          };
+        }, {})
+      pointAnnotations = Object.values(imageAnnos)
+      return pointAnnotations.map((point, i: number): ReactElement => <FlagMarker
+        key={i}
+        lat={point.lat}
+        lng={point.lng}
+        text={labels[labelIndex++ % labels.length]}
+      />)
+    } else {
+      return []
+    }
   }
 
   const buildImageMap = (maps: any): google.maps.ImageMapType => {
@@ -134,9 +131,8 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
     })
   }
 
-  const handleApiLoaded = ({map, maps}: any): void => {
+  const handleLoadApi = ({map, maps}: any): void => {
     addCoordsDiv(map, maps)
-    addClickListener(map)
     map.mapTypes.set('image', buildImageMap(maps))
     map.setMapTypeId('image')
   }
@@ -161,15 +157,15 @@ export const MapContainer: React.FC<any> = (): ReactElement => {
         bootstrapURLKeys={{ key: API_KEY as string }}
         defaultCenter={{lat: 54, lng: -34}}
         defaultZoom={2}
-        heatmap={buildPointAnnotations()}
-        heatmapLibrary={true}
         key={currentImageId}
         options={buildOptions}
         yesIWantToUseGoogleMapApiInternals
-        onGoogleApiLoaded={handleApiLoaded}
+        onGoogleApiLoaded={handleLoadApi}
       >
         {buildPointAnnotations()}
       </GoogleMapReact>
     </div>
-  ) : <></>
+  ) : (<></>)
 }
+
+export default AnonymousMapContainer
