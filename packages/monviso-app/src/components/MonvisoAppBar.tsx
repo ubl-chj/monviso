@@ -10,6 +10,7 @@ import {Menu} from '@material-ui/icons'
 import classNames from 'classnames'
 import {makeStyles} from '@material-ui/core/styles'
 import {useFirebaseAuth} from '@use-firebase/auth'
+import {QueryTypeMenu} from "./QueryTypeMenu"
 
 const drawerWidth = 240
 
@@ -24,10 +25,11 @@ const useStyles = makeStyles(theme => ({
   appBar: {
     backgroundColor: '#050531',
     color: theme.palette.primary.contrastText,
-    transition: theme.transitions.create(['margin', 'width'], {
+    transition: theme.transitions.create(['width', 'margin'], {
       duration: theme.transitions.duration.leavingScreen,
       easing: theme.transitions.easing.sharp,
     }),
+    zIndex: theme.zIndex.drawer + 1,
   },
   appBarShift: {
     marginLeft: drawerWidth,
@@ -37,18 +39,15 @@ const useStyles = makeStyles(theme => ({
     }),
     width: `calc(100% - ${drawerWidth}px)`,
   },
-  grow: {
-    flexGrow: 1,
-    position: 'fixed',
-    width: '100%',
-    zIndex: 1000
-  },
   hide: {
     display: 'none',
   },
   menuButton: {
     marginLeft: 12,
     marginRight: 20,
+  },
+  root: {
+    display: 'flex',
   },
   sectionDesktop: {
     display: 'none',
@@ -65,7 +64,7 @@ export const MonvisoAppBar: React.FC<IMonvisoAppBar> = (props): ReactElement => 
   const {isSignedIn} = useFirebaseAuth()
 
   return !enabled ? (
-    <div className={classes.grow}>
+    <div className={classes.root}>
       <AppBar
         className={classNames(classes.appBar, {
           [classes.appBarShift]: open,
@@ -80,6 +79,7 @@ export const MonvisoAppBar: React.FC<IMonvisoAppBar> = (props): ReactElement => 
             aria-label="Open drawer"
             className={classNames(classes.menuButton, open && classes.hide)}
             color="inherit"
+            edge="start"
             href=''
             onClick={handleDrawerOpen}
           >
@@ -90,11 +90,12 @@ export const MonvisoAppBar: React.FC<IMonvisoAppBar> = (props): ReactElement => 
           </Typography>
           <ImageResponseProvider/>
           <div className={classes.sectionDesktop}>
+            <QueryTypeMenu/>
             {isSignedIn ? <ProfileMenu/> : <SignInButton/> }
           </div>
         </Toolbar>
       </AppBar>
-      <PersistentDrawer handleDrawerClose={handleDrawerClose} open={open}/> )
+      <PersistentDrawer handleDrawerClose={handleDrawerClose} open={open}/>
     </div>
   ) : <></>
 }

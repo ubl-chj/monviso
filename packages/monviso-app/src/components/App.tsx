@@ -1,30 +1,17 @@
 import {CircularProgress, CssBaseline} from '@material-ui/core'
 import React, {Suspense} from 'react'
 import {MonvisoAppBar} from '.'
-import classNames from 'classnames'
 import {makeStyles} from '@material-ui/core/styles'
 import {useFirebaseAuth} from "@use-firebase/auth"
-const drawerWidth = 240
+
 const AuthorizedMapContainer = React.lazy(() => import('./AuthorizedMapContainer'))
 const AnonymousMapContainer = React.lazy(() => import('./AnonymousMapContainer'))
 
 export const styles = (theme: any) => ({
   content: {
     flexGrow: 1,
-    marginLeft: -drawerWidth,
     marginTop: 40,
     padding: theme.spacing(3),
-    transition: theme.transitions.create('margin', {
-      duration: theme.transitions.duration.leavingScreen,
-      easing: theme.transitions.easing.sharp,
-    }),
-  },
-  contentShift: {
-    marginLeft: 0,
-    transition: theme.transitions.create('margin', {
-      duration: theme.transitions.duration.enteringScreen,
-      easing: theme.transitions.easing.easeOut,
-    }),
   },
   progress: {
     margin: theme.spacing(2),
@@ -60,11 +47,7 @@ export const App: React.FC<any> = (props): any => {
         open={open}
       />
       <Suspense fallback={<CircularProgress className={classes.progress}/>}>
-        <main
-          className={classNames(classes.content, {
-            [classes.contentShift]: open,
-          })}
-        >
+        <main className={classes.content}>
           {isSignedIn ? <AuthorizedMapContainer/> : <AnonymousMapContainer/>}
         </main>
       </Suspense>

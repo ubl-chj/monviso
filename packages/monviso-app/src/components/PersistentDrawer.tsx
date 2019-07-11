@@ -1,4 +1,4 @@
-import {ChevronLeft, ChevronRight, Home} from "@material-ui/icons"
+import {ChevronLeft, ChevronRight, Collections, EditLocation, Home} from "@material-ui/icons"
 import {
   Divider,
   Drawer,
@@ -11,24 +11,40 @@ import {
   useTheme
 } from "@material-ui/core"
 import React, {ReactElement} from "react"
+import clsx from 'clsx'
 
 const drawerWidth = 240
 
 const useStyles = makeStyles(theme => ({
   drawer: {
     flexShrink: 0,
+    whiteSpace: 'nowrap',
     width: drawerWidth,
   },
-  drawerHeader: {
+  drawerClose: {
+    overflowX: 'hidden',
+    transition: theme.transitions.create('width', {
+      duration: theme.transitions.duration.leavingScreen,
+      easing: theme.transitions.easing.sharp,
+    }),
+    width: theme.spacing(7) + 1,
+    [theme.breakpoints.up('sm')]: {
+      width: theme.spacing(9) + 1,
+    },
+  },
+  drawerOpen: {
+    transition: theme.transitions.create('width', {
+      duration: theme.transitions.duration.enteringScreen,
+      easing: theme.transitions.easing.sharp,
+    }),
+    width: drawerWidth,
+  },
+  toolbar: {
     alignItems: 'center',
     display: 'flex',
-    padding: '0 8px',
-    ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
-  },
-  drawerPaper: {
-    width: drawerWidth,
-    zIndex: 3000,
+    padding: '0 12px',
+    ...theme.mixins.toolbar,
   },
 }))
 
@@ -43,12 +59,28 @@ export const PersistentDrawer: React.FC<any> = (props): ReactElement => {
       path: '/',
       text: 'Home'
     },
+    {
+      id: 'albums',
+      index: 0,
+      path: '/',
+      text: 'Albums'
+    },
+    {
+      id: 'editAnnotations',
+      index: 0,
+      path: '/',
+      text: 'Edit Annotations'
+    },
   ]
 
   const buildListItemIcon = (item: string): any => {
     switch (item) {
       case 'home':
         return <Home/>
+      case 'albums':
+        return <Collections/>
+      case 'editAnnotations':
+        return <EditLocation/>
     }
   }
 
@@ -70,14 +102,20 @@ export const PersistentDrawer: React.FC<any> = (props): ReactElement => {
   return (
     <Drawer
       anchor="left"
-      className={classes.drawer}
+      className={clsx(classes.drawer, {
+        [classes.drawerOpen]: open,
+        [classes.drawerClose]: !open,
+      })}
       classes={{
-        paper: classes.drawerPaper,
+        paper: clsx({
+          [classes.drawerOpen]: open,
+          [classes.drawerClose]: !open,
+        }),
       }}
       open={open}
-      variant="persistent"
+      variant="permanent"
     >
-      <div className={classes.drawerHeader}>
+      <div className={classes.toolbar}>
         <IconButton
           href=''
           onClick={handleDrawerClose}>
@@ -85,9 +123,7 @@ export const PersistentDrawer: React.FC<any> = (props): ReactElement => {
         </IconButton>
       </div>
       <Divider />
-      <List
-        component="nav"
-      >
+      <List style={{padding: 8}}>
         {buildListItems(listItems)}
       </List>
     </Drawer>

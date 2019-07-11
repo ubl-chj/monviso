@@ -1,6 +1,6 @@
 import 'firebase/database'
 import {AnyAction, Reducer, Store, applyMiddleware, combineReducers, createStore} from "redux"
-import {annotations, config, imageResponse} from '@monviso/core'
+import {annotations, config, imageResponse, imageServices} from '@monviso/core'
 import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk'
 import {App} from './components'
 import {FirebaseAppProvider} from '@use-firebase/app'
@@ -18,14 +18,16 @@ const initialAnnotationState = {
 const annotationReducer: Reducer = annotations(initialAnnotationState)
 
 const initialConfigState = {
-  currentImageId: 'https://image01.cudl.lib.cam.ac.uk/iiif/PR-ATLAS-00002-00061-00001-000-00003.jp2/info.json'
+  currentImageId: 'https://image01.cudl.lib.cam.ac.uk/iiif/PR-ATLAS-00002-00061-00001-000-00003.jp2/info.json',
+  queryType: 'image'
 }
 const configReducer: Reducer = config(initialConfigState)
 
 export const rootReducer = (): Reducer => combineReducers({
   annotations: annotationReducer,
   config: configReducer,
-  imageResponse
+  imageResponse,
+  imageServices
 })
 const thunk: ThunkMiddleware<{}, AnyAction> = thunkMiddleware
 

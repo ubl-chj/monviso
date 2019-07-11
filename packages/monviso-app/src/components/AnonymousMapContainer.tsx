@@ -126,7 +126,7 @@ const AnonymousMapContainer: React.FC<any> = (): ReactElement => {
       getTileUrl,
       maxZoom: 10,
       minZoom: 2,
-      name: 'image',
+      name: 'Image',
       tileSize: new maps.Size(imageWidth / maxScaleFactor, imageHeight / maxScaleFactor),
     })
   }
@@ -141,12 +141,13 @@ const AnonymousMapContainer: React.FC<any> = (): ReactElement => {
     return {
       gestureHandling: 'greedy',
       mapTypeControl: true,
+      mapTypeControlOptions: {
+        mapTypeIds: ['image', 'terrain', 'satellite'],
+        style: maps.MapTypeControlStyle.HORIZONTAL_BAR,
+      },
+      mapTypeId: 'image',
       minZoom: 2,
       streetViewControl: true,
-      zoomControl: true,
-      zoomControlOptions: {
-        position: maps.ControlPosition.LEFT_TOP
-      },
     }
   }
 

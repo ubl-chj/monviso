@@ -1,5 +1,5 @@
-import {reducerWithInitialState} from 'typescript-fsa-reducers'
 import {fetchImageResponse} from '../actions'
+import {reducerWithInitialState} from 'typescript-fsa-reducers'
 import uuidv5 from 'uuidv5'
 
 const initialState = {
@@ -22,11 +22,11 @@ export const imageResponse = reducerWithInitialState(initialState)
     updating: false,
     [uuidv5('url', params.requestUri)]: {
       context: result['@context'],
-      width: result.width,
       height: result.height,
+      profile: result.profile,
       sizes: result.sizes,
       tiles: result.tiles,
-      profile: result.profile,
       updating: false,
+      width: result.width,
     },
   }))
