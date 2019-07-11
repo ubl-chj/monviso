@@ -4,9 +4,25 @@ import uuidv5 from 'uuidv5'
 
 const initialState = {
 }
-interface IResponse {
 
+interface IImageResponse {
+  context: string;
+  height: number;
+  profile: [];
+  sizes: [];
+  tiles: [];
+  updating: boolean;
+  width: number;
 }
+
+interface IResponse {
+  error?: any;
+  imageResponse?: imageResponse;
+  updating: boolean;
+}
+
+type imageResponse = Record<string, IImageResponse>
+
 export const imageResponse = reducerWithInitialState(initialState)
   .case(fetchImageResponse.async.started, (state): IResponse => ({
     ...state,

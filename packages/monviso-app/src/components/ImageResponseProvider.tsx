@@ -39,6 +39,7 @@ export const ImageResponseProvider: React.FC<any> = (): ReactElement => {
 
   const handleChange = (e: any): void => {
     setValue(e.target.value)
+    dispatch(setCurrentImageId({currentImageId: e.target.value}))
   }
 
   const handleClear = (): void => {

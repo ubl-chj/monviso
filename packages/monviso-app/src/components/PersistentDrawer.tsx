@@ -61,13 +61,13 @@ export const PersistentDrawer: React.FC<any> = (props): ReactElement => {
     },
     {
       id: 'albums',
-      index: 0,
+      index: 1,
       path: '/',
       text: 'Albums'
     },
     {
       id: 'editAnnotations',
-      index: 0,
+      index: 2,
       path: '/',
       text: 'Edit Annotations'
     },

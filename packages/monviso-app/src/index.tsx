@@ -1,6 +1,6 @@
 import 'firebase/database'
 import {AnyAction, Reducer, Store, applyMiddleware, combineReducers, createStore} from "redux"
-import {annotations, config, imageResponse, imageServices} from '@monviso/core'
+import {annotations, config, imageResponse, manifests} from '@monviso/core'
 import thunkMiddleware, { ThunkMiddleware } from 'redux-thunk'
 import {App} from './components'
 import {FirebaseAppProvider} from '@use-firebase/app'
@@ -27,7 +27,7 @@ export const rootReducer = (): Reducer => combineReducers({
   annotations: annotationReducer,
   config: configReducer,
   imageResponse,
-  imageServices
+  manifests
 })
 const thunk: ThunkMiddleware<{}, AnyAction> = thunkMiddleware
 

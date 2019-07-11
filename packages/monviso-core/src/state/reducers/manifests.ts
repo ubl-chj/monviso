@@ -4,9 +4,22 @@ import uuidv5 from 'uuidv5'
 
 const initialState = {
 }
-interface IResponse {
+
+export interface IImageServices {
+  id: string;
+  profile: string;
+  type: string;
 }
-export const imageServices = reducerWithInitialState(initialState)
+
+type imageServices = Record<string, IImageServices>
+
+interface IResponse {
+  error?: any;
+  imageServices?: imageServices;
+  updating: boolean;
+}
+
+export const manifests = reducerWithInitialState(initialState)
   .case(fetchImageServices.async.started, (state): IResponse => ({
     ...state,
     updating: true

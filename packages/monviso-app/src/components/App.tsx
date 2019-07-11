@@ -7,7 +7,7 @@ import {useFirebaseAuth} from "@use-firebase/auth"
 const AuthorizedMapContainer = React.lazy(() => import('./AuthorizedMapContainer'))
 const AnonymousMapContainer = React.lazy(() => import('./AnonymousMapContainer'))
 
-export const styles = (theme: any) => ({
+export const useStyles = makeStyles((theme: any) => ({
   content: {
     flexGrow: 1,
     marginTop: 40,
@@ -19,11 +19,10 @@ export const styles = (theme: any) => ({
   root: {
     display: 'flex',
   },
-})
+}))
 
 
 export const App: React.FC<any> = (props): any => {
-  const useStyles = makeStyles(styles)
   const classes = useStyles();
   const {enabled} = props
   const {isSignedIn} = useFirebaseAuth()
