@@ -80,61 +80,53 @@ module.exports = function(webpackEnv) {
       strictExportPresence: true,
     },
     node: {
-      module: 'empty',
+      child_process: 'empty',
       dgram: 'empty',
       dns: 'mock',
       fs: 'empty',
       http2: 'empty',
+      module: 'empty',
       net: 'empty',
       tls: 'empty',
-      child_process: 'empty',
     },
     optimization: {
       minimize: isEnvProduction,
       minimizer: [
         new TerserPlugin({
+          cache: true,
+          parallel: !isWsl,
+          sourceMap: shouldUseSourceMap,
           terserOptions: {
-            parse: {
-              ecma: 8,
-            },
             compress: {
-              ecma: 5,
-              warnings: false,
               comparisons: false,
+              ecma: 5,
               inline: 2,
+              warnings: false,
             },
             mangle: {
               safari10: true,
             },
             output: {
-              ecma: 5,
-              comments: false,
               ascii_only: true,
+              comments: false,
+              ecma: 5,
+            },
+            parse: {
+              ecma: 8,
             },
           },
-          parallel: !isWsl,
-          cache: true,
-          sourceMap: shouldUseSourceMap,
         }),
       ],
+      runtimeChunk: true,
       splitChunks: {
         chunks: 'all',
         name: false,
       },
-      runtimeChunk: true,
     },
     output: {
-      path: isEnvProduction ? paths.appBuild : undefined,
-      pathinfo: isEnvDevelopment,
-      filename: isEnvProduction
-        ? 'static/js/[name].[contenthash:8].js'
-        : isEnvDevelopment && 'static/js/bundle.js',
-      // TODO: remove this when upgrading to webpack 5
-      futureEmitAssets: true,
       chunkFilename: isEnvProduction
         ? 'static/js/[name].[contenthash:8].chunk.js'
         : isEnvDevelopment && 'static/js/[name].chunk.js',
-      publicPath,
       devtoolModuleFilenameTemplate: isEnvProduction
         ? info =>
           path
@@ -142,7 +134,16 @@ module.exports = function(webpackEnv) {
             .replace(/\\/g, '/')
         : isEnvDevelopment &&
         (info => path.resolve(info.absoluteResourcePath).replace(/\\/g, '/')),
+      filename: isEnvProduction
+        ? 'static/js/[name].[contenthash:8].js'
+        : isEnvDevelopment && 'static/js/bundle.js',
+      // TODO: remove this when upgrading to webpack 5
+      futureEmitAssets: true,
+      path: isEnvProduction ? paths.appBuild : undefined,
+      pathinfo: isEnvDevelopment,
+      publicPath,
     },
+    performance: false,
     plugins: [
       new HtmlWebpackPlugin(
         Object.assign(
@@ -154,16 +155,16 @@ module.exports = function(webpackEnv) {
           isEnvProduction
             ? {
               minify: {
-                removeComments: true,
                 collapseWhitespace: true,
-                removeRedundantAttributes: true,
-                useShortDoctype: true,
-                removeEmptyAttributes: true,
-                removeStyleLinkTypeAttributes: true,
                 keepClosingSlash: true,
-                minifyJS: true,
                 minifyCSS: true,
+                minifyJS: true,
                 minifyURLs: true,
+                removeComments: true,
+                removeEmptyAttributes: true,
+                removeRedundantAttributes: true,
+                removeStyleLinkTypeAttributes: true,
+                useShortDoctype: true,
               },
             }
             : undefined
@@ -181,7 +182,6 @@ module.exports = function(webpackEnv) {
         new WatchMissingNodeModulesPlugin(paths.appNodeModules),
       new ManifestPlugin({
         fileName: 'asset-manifest.json',
-        publicPath: publicPath,
         generate: (seed, files) => {
           const manifestFiles = files.reduce(function(manifest, file) {
             manifest[file.name] = file.path;
@@ -192,8 +192,9 @@ module.exports = function(webpackEnv) {
             files: manifestFiles,
           };
         },
+        publicPath,
       }),
-      new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+      new webpack.IgnorePlugin({resourceRegExp: /@blueprintjs\/(core|icons)/}),
       isEnvProduction &&
         new WorkboxWebpackPlugin.GenerateSW({
           clientsClaim: true,
@@ -207,19 +208,9 @@ module.exports = function(webpackEnv) {
         }),
       useTypeScript &&
         new ForkTsCheckerWebpackPlugin({
-          typescript: resolve.sync('typescript', {
-            basedir: paths.appNodeModules,
-          }),
           async: isEnvDevelopment,
-          useTypescriptIncrementalApi: true,
           checkSyntacticErrors: true,
-          resolveModuleNameModule: process.versions.pnp
-            ? `${__dirname}/pnpTs.js`
-            : undefined,
-          resolveTypeReferenceDirectiveModule: process.versions.pnp
-            ? `${__dirname}/pnpTs.js`
-            : undefined,
-          tsconfig: paths.appTsConfig,
+          formatter: isEnvProduction ? typescriptFormatter : undefined,
           reportFiles: [
             '**',
             '!**/__tests__/**',
@@ -227,22 +218,31 @@ module.exports = function(webpackEnv) {
             '!**/src/setupProxy.*',
             '!**/src/setupTests.*',
           ],
-          watch: paths.appSrc,
+          resolveModuleNameModule: process.versions.pnp
+            ? `${__dirname}/pnpTs.js`
+            : undefined,
+          resolveTypeReferenceDirectiveModule: process.versions.pnp
+            ? `${__dirname}/pnpTs.js`
+            : undefined,
           silent: true,
-          formatter: isEnvProduction ? typescriptFormatter : undefined,
+          tsconfig: paths.appTsConfig,
+          typescript: resolve.sync('typescript', {
+            basedir: paths.appNodeModules,
+          }),
+          useTypescriptIncrementalApi: true,
+          watch: paths.appSrc,
         }),
     ].filter(Boolean),
-    performance: false,
     resolve: {
-      modules: ['node_modules', paths.appNodeModules].concat(
-        modules.additionalModulePaths || []
-      ),
-      extensions: paths.moduleFileExtensions
-        .map(ext => `.${ext}`)
-        .filter(ext => useTypeScript || !ext.includes('ts')),
       alias: {
         'react-native': 'react-native-web',
       },
+      extensions: paths.moduleFileExtensions
+        .map(ext => `.${ext}`)
+        .filter(ext => useTypeScript || !ext.includes('ts')),
+      modules: ['node_modules', paths.appNodeModules].concat(
+        modules.additionalModulePaths || []
+      ),
       plugins: [
         PnpWebpackPlugin,
         new ModuleScopePlugin(paths.appSrc, [paths.appPackageJson]),
