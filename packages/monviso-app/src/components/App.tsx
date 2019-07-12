@@ -3,6 +3,7 @@ import React, {Suspense} from 'react'
 import {MonvisoAppBar} from '.'
 import {makeStyles} from '@material-ui/core/styles'
 import {useFirebaseAuth} from "@use-firebase/auth"
+import {MosaicWorkspace} from "@monviso/workspace"
 
 const AuthorizedMapContainer = React.lazy(() => import('./AuthorizedMapContainer'))
 const AnonymousMapContainer = React.lazy(() => import('./AnonymousMapContainer'))
@@ -10,7 +11,6 @@ const AnonymousMapContainer = React.lazy(() => import('./AnonymousMapContainer')
 export const useStyles = makeStyles((theme: any) => ({
   content: {
     flexGrow: 1,
-    marginTop: 40,
     padding: theme.spacing(3),
   },
   progress: {
@@ -45,11 +45,13 @@ export const App: React.FC<any> = (props): any => {
         handleDrawerOpen={handleDrawerOpen}
         open={open}
       />
-      <Suspense fallback={<CircularProgress className={classes.progress}/>}>
-        <main className={classes.content}>
-          {isSignedIn ? <AuthorizedMapContainer/> : <AnonymousMapContainer/>}
-        </main>
-      </Suspense>
+      <MosaicWorkspace>
+        <Suspense fallback={<CircularProgress className={classes.progress}/>}>
+          <main className={classes.content}>
+            {isSignedIn ? <AuthorizedMapContainer/> : <AnonymousMapContainer/>}
+          </main>
+        </Suspense>
+      </MosaicWorkspace>
     </div>
   )
 }

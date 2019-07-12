@@ -8,7 +8,7 @@ import {
 import React, {ReactElement, useRef} from 'react'
 import {FlagMarker} from '.'
 import {google} from 'google-maps'
-import {useValue} from '../utils'
+import {distanceToMouse, useValue} from '../utils'
 import uuid from 'uuid'
 import uuidv5 from 'uuidv5'
 
@@ -165,12 +165,13 @@ const AuthorizedMapContainer: React.FC<any> = (): ReactElement => {
   }
 
   return currentImageId && scaleFactors ? (
-    <div style={{height: 'calc(100vh - 88px)'}}>
+    <div style={{height: 'calc(100vh - 124px)'}}>
       <div ref={coordsDiv}/>
       <GoogleMapReact
         bootstrapURLKeys={{ key: API_KEY as string }}
         defaultCenter={{lat: 54, lng: -34}}
         defaultZoom={2}
+        distanceToMouse={distanceToMouse}
         key={currentImageId}
         options={buildOptions}
         yesIWantToUseGoogleMapApiInternals
