@@ -152,7 +152,7 @@ const AnonymousMapContainer: React.FC<any> = (): ReactElement => {
   }
 
   return currentImageId && scaleFactors ? (
-    <div style={{height: 'calc(100vh - 88px)'}}>
+    <div style={{height: 'calc(100vh - 124px)'}}>
       <div ref={coordsDiv}/>
       <GoogleMapReact
         bootstrapURLKeys={{ key: API_KEY as string }}
